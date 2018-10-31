@@ -11,14 +11,18 @@ using namespace packet;
 
 class FileReader
 {
-public:
+  public:
 	FileReader(const char *filename);
+	FileReader(const char *filename, int maxDataLength);
+	~FileReader();
+	std::vector<Frame> readAt(int offset, int amount);
 	int fileSize;
 	std::vector<Frame> toFrames(int maxDataLength);
 
-private:
+  private:
 	std::ifstream file;
 	const char *filename;
+	int maxDataLength;
 };
 } // namespace file
 #endif
