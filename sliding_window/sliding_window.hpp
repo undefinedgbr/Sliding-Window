@@ -10,13 +10,13 @@ namespace sw {
 
 	class SlidingWindow {
 	private:
-		std::vector<Frame> frames;
 		std::vector<ACK> acks;
 		int size;
 		int start;
 		int end;
 		int availableFrame;
 	public:
+		std::vector<Frame> frames;
 		SlidingWindow() : SlidingWindow(0) {}
 		SlidingWindow(int size);
 		SlidingWindow(const SlidingWindow& window);

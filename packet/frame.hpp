@@ -7,11 +7,13 @@
 namespace packet {
 	class Frame : public Packet {
 	  private:
+	  	static int frameCount;
 		char SOH;
 		int seqNum;
 		char data[1024];
 		int dataLength;
 	  public:
+	  	~Frame();
 		Frame();
 		Frame(char *serial);
 		Frame(const Frame &frame);

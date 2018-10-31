@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++14 -pthread
 
 CLIENT = client.out
 SERVER = server.out
-DEPENDENCY = packet/ack.cpp packet/frame.cpp packet/packet.cpp sliding_window/sliding_window.cpp
+DEPENDENCY = packet/ack.cpp packet/frame.cpp packet/packet.cpp sliding_window/sliding_window.cpp file/file_reader.cpp file/file_writer.cpp
 
 
 all: $(CLIENT) $(SERVER)

@@ -6,11 +6,13 @@
 #include "server.hpp"
 #include "../packet/ack.hpp"
 #include "../packet/frame.hpp"
+#include "../file/file_writer.hpp";
 
 
 namespace server {
 	using namespace packet;
 	using namespace sw;
+	using namespace file;
 
 	Server::Server(int port) {
 		this->port = port;
@@ -32,13 +34,18 @@ namespace server {
 		char * buffer;
 		char * data;
 		int dataLength;
-		while (1) {
+		bool end = false;
+		while (!end) {
 			buffer = new char[1034];
 			recvfrom((this->sock) , buffer, 1034, 0, &(clientAddress), &addrlen);
 			Frame frame(buffer);
 			printf("RECEIVED FRAME : %d\n", frame.getSeqNum());
 			this->processFrame(frame, clientAddress);
 			delete [] buffer;
+			end = frame.getSOH() == 0x4;
+			if (end) {
+				writeFramesToFile("examples/test-result.flac", this->window.frames);
+			}
 		}
 	}
 

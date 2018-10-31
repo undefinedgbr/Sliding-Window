@@ -3,13 +3,16 @@
 #include <unistd.h>
 #include <functional>
 #include <string.h>
+#include <vector>
+#include "file/file_reader.hpp"
 
 using namespace client;
 using namespace std;
+using namespace file;
 
 int main() {
 	char host[10];
-	std::string s = "127.0.0.1";
+	string s = "127.0.0.1";
 	strcpy(host, s.c_str());
 
 	Client client(host, 9000);
@@ -21,21 +24,13 @@ int main() {
 		client.resendIfTimeout();
 	});
 
-	char data[1024];
+	FileReader reader("examples/test.flac");
+	vector<Frame> frames = reader.toFrames(1024);
 
-	for (int i = 0; i < 1024; i++) {
-		data[i] = 'x';
-	}
-
-	Frame frame(0x1, 0, 1024, data);
-
-	for (int i = 0; i < 10000; i++) {
-		frame.setSeqNum(i);
-		if (i % 2) {
-			frame.generateChecksum();
-		}
-		client.sendMessage(frame);
-		usleep(500);
+	for (Frame f : frames) {
+		f.generateChecksum();
+		client.sendMessage(f);
+		usleep(3000);
 	}
 
 	thread1.join();

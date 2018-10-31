@@ -4,7 +4,9 @@
 
 
 namespace packet {
+	int Frame::frameCount(0);
 	Frame::Frame() {
+		frameCount++;
 		this->SOH = 0;
 		this->seqNum = 0;
 		this->dataLength = 0;
@@ -12,6 +14,7 @@ namespace packet {
 	}
 
 	Frame::Frame(char SOH, int seqNum, int dataLength, char * data) {
+		frameCount++;
 		this->SOH = SOH;
 		this->seqNum = seqNum;
 		this->dataLength = dataLength;
@@ -21,10 +24,11 @@ namespace packet {
 		}
 
 		this->generateChecksum();
-
 	}
 
 	Frame::Frame(char *serial) {
+		printf("ALIVE FRAMES : %d\n", frameCount);
+		frameCount++;
 		this->SOH = serial[0];
 		this->seqNum = int(((unsigned char)serial[1] << 24) & 0xFF000000 |
 						   ((unsigned char)serial[2] << 16) & 0x00FF0000 |
@@ -44,6 +48,10 @@ namespace packet {
 	}
 
 	Frame::Frame(const Frame &frame) : Frame(frame.serialize()) {}
+
+	Frame::~Frame() {
+		frameCount--;
+	}
 
 	char *Frame::serialize() const {
 		char *serial;
