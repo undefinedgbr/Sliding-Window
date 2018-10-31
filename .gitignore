@@ -1,3 +1,5 @@
+*.flac
+*.pdf
 .DS_Store
 # Prerequisites
 *.d

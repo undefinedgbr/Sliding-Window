@@ -3,7 +3,7 @@
 using namespace server;
 
 int main() {
-	Server server(9000);
-	server.listenForClients();
+	Server myServer(9000);
+	myServer.listenForClients();
 	return 0;
 }

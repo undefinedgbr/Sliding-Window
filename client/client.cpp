@@ -79,7 +79,7 @@ namespace client {
 	void Client::resendIfTimeout() {
 		while (1) {
 			if (this->timeouts.empty()) {
-				usleep(10000);
+				usleep(100);
 				continue;
 			}
 			tuple<int, struct std::tm *> timeout = this->timeouts.front();

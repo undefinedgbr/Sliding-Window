@@ -22,6 +22,7 @@ namespace server {
 		void processFrame(Frame& frame, sockaddr clientAddress);
 		void replyACK(int seqNum, sockaddr clientAddress);
 		void replyNACK(int seqNum, sockaddr clientAddress);
+		void checkAllFrames();
 	};
 }
 

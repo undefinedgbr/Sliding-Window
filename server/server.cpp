@@ -34,18 +34,21 @@ namespace server {
 		char * buffer;
 		char * data;
 		int dataLength;
-		bool end = false;
-		while (!end) {
+		bool lastPacketReceived = false;
+		while (1) {
 			buffer = new char[1034];
 			recvfrom((this->sock) , buffer, 1034, 0, &(clientAddress), &addrlen);
 			Frame frame(buffer);
+			if (!lastPacketReceived) {
+				lastPacketReceived = frame.getSOH() == 0x4;
+			}
 			printf("RECEIVED FRAME : %d\n", frame.getSeqNum());
 			this->processFrame(frame, clientAddress);
-			delete [] buffer;
-			end = frame.getSOH() == 0x4;
-			if (end) {
-				writeFramesToFile("examples/test-result.flac", this->window.frames);
+			if (lastPacketReceived) {
+				//writeFramesToFile("examples/test-result.pdf", this->window.frames);
+				this->checkAllFrames();
 			}
+			delete [] buffer;
 		}
 	}
 
@@ -74,5 +77,22 @@ namespace server {
 		char * buffer = ack.serialize();
 		sendto(this->sock, ack.serialize(), 6, 0, &(clientAddress), sizeof(clientAddress));
 		free(buffer);
+	}
+
+	void Server::checkAllFrames() {
+		int i = 0;
+		for (Frame& f : this->window.frames) {
+			if (f.getSeqNum() != i) {
+				printf("MISSING FRAME : %d\n", i);
+				break;
+			}
+			i++;
+		}
+
+		if (this->window.getFrame(i-1).getSOH() == 0x4) {
+			printf("CLEAARRR\n");
+			writeFramesToFile("examples/test-result.flac", this->window.frames);
+			exit(1);
+		}
 	}
 }

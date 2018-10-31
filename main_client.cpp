@@ -22,6 +22,7 @@ int main() {
 
 	thread thread2([&client]{
 		client.resendIfTimeout();
+		exit(1);
 	});
 
 	FileReader reader("examples/test.flac");
@@ -33,8 +34,8 @@ int main() {
 		usleep(3000);
 	}
 
-	thread1.join();
 	thread2.join();
+	thread1.join();
 
 	return 0;
 }
