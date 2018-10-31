@@ -57,18 +57,15 @@ namespace sw {
 			return false;
 		}
 
-		this->availableFrame++;
-		if (this->acks[ack.getNextSeqNum() - 1].getAck() != 0x6) {
+		this->acks[ack.getNextSeqNum() - 1] = ack;
+
+		while (this->acks[this->start].getAck() == 0x6) {
 			this->start++;
 			this->end++;
 			this->acks.resize(this->acks.size() + 1);
-			printf("TEST ACK4\n");
 			this->frames.resize(this->frames.size() + 1);
-			printf("TEST ACK3\n");
+			this->availableFrame++;
 		}
-		printf("TEST ACK\n");
-		this->acks[ack.getNextSeqNum() - 1] = ack;
-		printf("TEST ACK2\n");
 
 		return true;
 	}
