@@ -50,7 +50,11 @@ int main(int argc, char **argv)
 	for (Frame f : frames)
 	{
 		f.generateChecksum();
-		client.sendMessage(f);
+		bool result = false;
+		while (!result) {
+			result = client.sendMessage(f);
+			usleep(3000);
+		}
 		usleep(3000);
 	}
 

@@ -69,7 +69,7 @@ void Server::processFrame(Frame &frame, sockaddr clientAddress)
 	}
 }
 
-void Server::replyNACK(int seqNum, sockaddr clientAddress) 
+void Server::replyACK(int seqNum, sockaddr clientAddress) 
 {
 	ACK ack(0x6, seqNum+1);
 	printf("SENT ACK : %d\n", ack.getNextSeqNum() -1);
@@ -79,7 +79,7 @@ void Server::replyNACK(int seqNum, sockaddr clientAddress)
 	free(buffer);
 }
 
-void Server::replyACK(int seqNum, sockaddr clientAddress) 
+void Server::replyNACK(int seqNum, sockaddr clientAddress) 
 {
 	ACK ack(0x2, seqNum+1);
 	printf("SENT NACK : %d\n", ack.getNextSeqNum() -1);

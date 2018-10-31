@@ -45,13 +45,17 @@ namespace client {
 		}
 	}
 
-	void Client::sendMessage(Frame& frame) {
+	bool Client::sendMessage(Frame& frame) {
 		char * buffer = frame.serialize();
+		bool result = this->window.addFrame(frame);
+		if (!result) {
+			return false;
+		}
 		int res = sendto((this->sock) , buffer , 1034 , 0, (struct sockaddr *)&(this->serverAddress), sizeof(this->serverAddress)); 
-		this->window.addFrame(frame);
 		this->queueTimeout(frame.getSeqNum());
 		printf("SENT FRAME : %d\n", frame.getSeqNum());
 		free(buffer);
+		return true;
 	}
 
 	bool Client::checkACK(int seqNum) {
@@ -79,13 +83,16 @@ namespace client {
 	void Client::resendIfTimeout() {
 		while (1) {
 			if (this->timeouts.empty()) {
+				printf("EMPTY\n");
 				usleep(100);
 				continue;
 			}
+			printf("TIMEOUT\n");
 			tuple<int, struct std::tm *> timeout = this->timeouts.front();
 			this_thread::sleep_until (system_clock::from_time_t (mktime(std::get<1>(timeout))));
 			this->timeouts.pop_front();
 			if (!this->checkACK(std::get<0>(timeout))) {
+				printf("RESEND : %d\n", std::get<0>(timeout));
 				resendMessage(std::get<0>(timeout));
 				this->timeouts.push_back(timeout);
 			}

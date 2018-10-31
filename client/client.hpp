@@ -27,7 +27,7 @@ class Client
   public:
 	Client(char *host, int port);
 	~Client();
-	void sendMessage(Frame &frame);
+	bool sendMessage(Frame &frame);
 	bool checkACK(int seqNum);
 	void resendMessage(int seqNum);
 	void listenForResponse();

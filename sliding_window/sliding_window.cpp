@@ -24,19 +24,24 @@ namespace sw {
 
 	bool SlidingWindow::addFrame(Frame frame) {
 		if (this->availableFrame == 0) {
+			printf("WINDOW SIZE : %d\n", this->size);
+			printf("NO AVAIL FRAME\n");
 			return false;
 		}
 
 		if (frame.getSeqNum() >= this->frames.size()) {
+			printf("SIZE NOT ENOUGH\n");
 			return false;
 		}
 
 		if (frame.getSeqNum() > this->end) {
+			printf("OUT OF BOUND\n");
 			return false;
 		}
 
 		this->frames[frame.getSeqNum()] = frame;
 		this->availableFrame--;
+		return true;
 	}
 
 	bool SlidingWindow::addACK(ACK ack) {
@@ -64,6 +69,8 @@ namespace sw {
 		printf("TEST ACK\n");
 		this->acks[ack.getNextSeqNum() - 1] = ack;
 		printf("TEST ACK2\n");
+
+		return true;
 	}
 
 	Frame& SlidingWindow::getFrame(int seqNum) {
