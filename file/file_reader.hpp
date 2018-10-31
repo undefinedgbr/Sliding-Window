@@ -5,19 +5,20 @@
 #include <vector>
 #include "../packet/frame.hpp"
 
-namespace file {
-	using namespace packet;
-	
-	class FileReader
-	{
-	  public:
-	    FileReader(const char *filename);
-	    int fileSize;
-	    std::vector<Frame> toFrames(int maxDataLength);
+namespace file
+{
+using namespace packet;
 
-	  private:
-	    std::ifstream file;
-	    const char *filename;
-	};
-}
+class FileReader
+{
+public:
+	FileReader(const char *filename);
+	int fileSize;
+	std::vector<Frame> toFrames(int maxDataLength);
+
+private:
+	std::ifstream file;
+	const char *filename;
+};
+} // namespace file
 #endif
