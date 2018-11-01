@@ -15,6 +15,7 @@ SlidingWindow::SlidingWindow(int size)
 	this->acks.resize(size);
 	this->frames.resize(100);
 	this->locked = false;
+	this->dumped = this->start;
 
 	this->windowForwardCallback = [](vector<Frame> &) {};
 }
@@ -28,6 +29,7 @@ SlidingWindow::SlidingWindow(const SlidingWindow &window)
 	this->acks.resize(this->size);
 	this->frames.resize(100);
 	this->locked = false;
+	this->dumped = this->start;
 
 	this->windowForwardCallback = [](vector<Frame> &) {};
 }
@@ -46,7 +48,7 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
-	if (frame.getSeqNum() - this->start >= this->frames.size())
+	if (frame.getSeqNum() - this->dumped >= this->frames.size())
 	{
 		printf("SIZE NOT ENOUGH\n");
 		return false;
@@ -58,7 +60,7 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
-	this->frames[frame.getSeqNum() - this->start] = frame;
+	this->frames[frame.getSeqNum() - this->dumped] = frame;
 	this->availableFrame--;
 	return true;
 }
@@ -85,17 +87,16 @@ bool SlidingWindow::addACK(ACK ack)
 	}
 
 	this->acks[ack.getNextSeqNum() - 1] = ack;
-
 	while (this->acks[this->start].getAck() == 0x6)
 	{
-		//this->start++;
+		this->start++;
 		this->end++;
 		this->acks.resize(this->acks.size() + 1);
 		//this->frames.resize(this->frames.size() + 1);
 		this->availableFrame++;
 	}
 	int count = 0;
-	for (int i = this->start; i < this->start + 100; i++) {
+	for (int i = this->dumped; i < this->dumped + 100; i++) {
 		if (this->acks[i].getAck() == 0x6) {
 			count++;
 		} else {
@@ -105,7 +106,7 @@ bool SlidingWindow::addACK(ACK ack)
 
 	if (count == 100) {
 		this->windowForwardCallback(this->frames);
-		this->start += 100;
+		this->dumped += 100;
 	}
 
 

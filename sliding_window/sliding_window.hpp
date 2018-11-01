@@ -19,6 +19,7 @@ class SlidingWindow
 	int start;
 	int end;
 	int availableFrame;
+	int dumped;
 	std::function<void(vector<Frame> &)> windowForwardCallback;
 
   public:
