@@ -34,6 +34,7 @@ void FileWriter::appendPacket(std::vector<Frame> &frames)
 		}
 		this->appendPacket(frame);
 	}
+	this->file.flush();
 }
 
 int writeFramesToFile(const char *filename, std::vector<Frame> &frames)

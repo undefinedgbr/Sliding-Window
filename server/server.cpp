@@ -104,7 +104,7 @@ void Server::replyNACK(int seqNum, sockaddr clientAddress)
 void Server::checkAllFrames()
 {
 	this->window.locked = true;
-	printf("FRAME LEFT %d\n", this->window.frames.size());
+	printf("FRAME LEFT %lu\n", this->window.frames.size());
 	int i = 0;
 	for (Frame &f : this->window.frames)
 	{
