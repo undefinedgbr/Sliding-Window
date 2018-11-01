@@ -4,6 +4,7 @@
 namespace sw
 {
 using namespace packet;
+using namespace std;
 
 SlidingWindow::SlidingWindow(int size)
 {
@@ -12,9 +13,10 @@ SlidingWindow::SlidingWindow(int size)
 	this->end = this->start + size;
 	this->availableFrame = size;
 	this->acks.resize(size);
-	this->frames.resize(size);
+	this->frames.resize(100);
+	this->locked = false;
 
-	this->windowForwardCallback = [](Frame &) {};
+	this->windowForwardCallback = [](vector<Frame> &) {};
 }
 
 SlidingWindow::SlidingWindow(const SlidingWindow &window)
@@ -24,13 +26,19 @@ SlidingWindow::SlidingWindow(const SlidingWindow &window)
 	this->end = window.getEnd();
 	this->availableFrame = this->size;
 	this->acks.resize(this->size);
-	this->frames.resize(this->size);
+	this->frames.resize(100);
+	this->locked = false;
 
-	this->windowForwardCallback = [](Frame &) {};
+	this->windowForwardCallback = [](vector<Frame> &) {};
 }
 
 bool SlidingWindow::addFrame(Frame frame)
 {
+	if (this->locked) {
+		printf("LOCKED\n");
+		return false;
+	}
+
 	if (this->availableFrame == 0)
 	{
 		printf("WINDOW SIZE : %d\n", this->size);
@@ -38,7 +46,7 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
-	if (frame.getSeqNum() >= this->frames.size())
+	if (frame.getSeqNum() - this->start >= this->frames.size())
 	{
 		printf("SIZE NOT ENOUGH\n");
 		return false;
@@ -50,13 +58,17 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
-	this->frames[frame.getSeqNum()] = frame;
+	this->frames[frame.getSeqNum() - this->start] = frame;
 	this->availableFrame--;
 	return true;
 }
 
 bool SlidingWindow::addACK(ACK ack)
 {
+	if (this->locked) {
+		return false;
+	}
+
 	if (ack.getAck() != 0x6)
 	{
 		return false;
@@ -76,14 +88,26 @@ bool SlidingWindow::addACK(ACK ack)
 
 	while (this->acks[this->start].getAck() == 0x6)
 	{
-		this->windowForwardCallback(this->frames[0]);
-
-		this->start++;
+		//this->start++;
 		this->end++;
 		this->acks.resize(this->acks.size() + 1);
-		this->frames.resize(this->frames.size() + 1);
+		//this->frames.resize(this->frames.size() + 1);
 		this->availableFrame++;
 	}
+	int count = 0;
+	for (int i = this->start; i < this->start + 100; i++) {
+		if (this->acks[i].getAck() == 0x6) {
+			count++;
+		} else {
+			break;
+		}
+	}
+
+	if (count == 100) {
+		this->windowForwardCallback(this->frames);
+		this->start += 100;
+	}
+
 
 	return true;
 }
@@ -123,7 +147,7 @@ void SlidingWindow::setEnd(int end)
 	this->end = end;
 }
 
-void SlidingWindow::setWFCallback(std::function<void(Frame &)> func)
+void SlidingWindow::setWFCallback(std::function<void(vector<Frame> &)> func)
 {
 	this->windowForwardCallback = func;
 }

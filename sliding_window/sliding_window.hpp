@@ -9,6 +9,7 @@
 namespace sw
 {
 using namespace packet;
+using namespace std;
 
 class SlidingWindow
 {
@@ -18,9 +19,10 @@ class SlidingWindow
 	int start;
 	int end;
 	int availableFrame;
-	std::function<void(Frame &)> windowForwardCallback;
+	std::function<void(vector<Frame> &)> windowForwardCallback;
 
   public:
+  	bool locked;
 	std::vector<Frame> frames;
 	SlidingWindow() : SlidingWindow(0) {}
 	SlidingWindow(int size);
@@ -34,7 +36,7 @@ class SlidingWindow
 	void setSize(int size);
 	void setStart(int start);
 	void setEnd(int end);
-	void setWFCallback(std::function<void(Frame &)> func);
+	void setWFCallback(std::function<void(vector<Frame> &)> func);
 	void incrementAvailableFrame();
 
 	int getSize() const;
