@@ -104,7 +104,7 @@ void Server::checkAllFrames()
 	int i = 0;
 	for (Frame &f : this->window.frames)
 	{
-		if (f.getSeqNum() != i)
+		if (f.getSeqNum() != i + this->window.dumped)
 		{
 			printf("MISSING FRAME : %d\n", i);
 			break;

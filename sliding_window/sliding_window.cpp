@@ -115,12 +115,12 @@ bool SlidingWindow::addACK(ACK ack)
 
 Frame &SlidingWindow::getFrame(int seqNum)
 {
-	if (this->frames.size() <= seqNum)
+	if (this->frames.size() <= seqNum - this->dumped)
 	{
 		return this->frames[0];
 	}
 
-	return this->frames[seqNum];
+	return this->frames[seqNum - this->dumped];
 }
 
 ACK &SlidingWindow::getACK(int seqNum)
