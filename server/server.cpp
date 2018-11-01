@@ -14,14 +14,14 @@ using namespace packet;
 using namespace sw;
 using namespace file;
 
-Server::Server(int port, char *destinationFile) : writer(destinationFile)
+Server::Server(int port, char *destinationFile, int windowsize) : writer(destinationFile)
 {
 	this->destinationFile = destinationFile;
 	this->port = port;
 	this->address.sin_family = AF_INET;
 	this->address.sin_addr.s_addr = INADDR_ANY;
 	this->address.sin_port = htons(port);
-	this->window = SlidingWindow(10);
+	this->window = SlidingWindow(windowsize);
 	this->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	bind((this->sock), (struct sockaddr *)&(this->address), sizeof(this->address));
 
@@ -123,6 +123,6 @@ void Server::checkAllFrames()
 		printf("EXIT\n");
 	}
 	this->window.locked = false;
-	// exit(0);
+	exit(0);
 }
 } // namespace server

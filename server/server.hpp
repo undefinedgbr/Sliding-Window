@@ -12,23 +12,25 @@ using namespace packet;
 using namespace sw;
 using namespace file;
 
-class Server {
-private:
+class Server
+{
+  private:
 	struct sockaddr_in address;
 	int port;
 	int sock;
 	SlidingWindow window;
 	char *destinationFile;
-public:
+
+  public:
 	FileWriter writer;
-	Server(int port, char * destinationFile);
+	Server(int port, char *destinationFile, int windowsize);
 	~Server();
 	void listenForClients();
-	void processFrame(Frame& frame, sockaddr clientAddress);
+	void processFrame(Frame &frame, sockaddr clientAddress);
 	void replyACK(int seqNum, sockaddr clientAddress);
 	void replyNACK(int seqNum, sockaddr clientAddress);
 	void checkAllFrames();
 };
-}
+} // namespace server
 
 #endif

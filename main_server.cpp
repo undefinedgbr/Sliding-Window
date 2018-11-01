@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
 	printf("Starting %s at 0.0.0.0:%d window %d buffer %d receiving %s\n", argv[0], port, windowsize, buffersize, filename);
 
-	Server server(port, filename);
+	Server server(port, filename, windowsize);
 	server.listenForClients();
 	return 0;
 }
