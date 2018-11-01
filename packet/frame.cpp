@@ -9,7 +9,7 @@ Frame::Frame()
 {
 	frameCount++;
 	this->SOH = 0;
-	this->seqNum = 0;
+	this->seqNum = -1;
 	this->dataLength = 0;
 	this->checksum = -1;
 }

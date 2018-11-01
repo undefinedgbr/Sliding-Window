@@ -58,9 +58,9 @@ int main(int argc, char **argv)
 			while (!result)
 			{
 				result = client.sendMessage(f);
-				// usleep(3000);
+				//usleep(1000);
 			}
-			// usleep(3000);
+			//usleep(1000);
 		}
 
 		if (frames[frames.size() - 1].getSOH() == 0x4)

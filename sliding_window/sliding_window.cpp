@@ -89,6 +89,7 @@ bool SlidingWindow::addACK(ACK ack)
 	this->acks[ack.getNextSeqNum() - 1] = ack;
 	while (this->acks[this->start].getAck() == 0x6)
 	{
+		printf("MAJUUUUUUU\n");
 		this->start++;
 		this->end++;
 		this->acks.resize(this->acks.size() + 1);

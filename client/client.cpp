@@ -20,9 +20,9 @@ namespace client {
 	Client::Client(char * host, int port) {
 		this->port = port;
 		this->serverAddress.sin_family = AF_INET; 
-	    this->serverAddress.sin_addr.s_addr = INADDR_ANY; 
+	    this->serverAddress.sin_addr.s_addr = inet_addr(host); 
 	    this->serverAddress.sin_port = htons(port);
-	    inet_pton(AF_INET, host, &(this->serverAddress).sin_addr);
+	    //inet_pton(AF_INET, host, &(this->serverAddress).sin_addr);
 	    this->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	    this->window = SlidingWindow(10);
 	}
