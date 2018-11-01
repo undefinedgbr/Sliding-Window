@@ -61,7 +61,7 @@ void Server::listenForClients()
 		if (lastPacketReceived)
 		{
 			//writeFramesToFile("examples/test-result.pdf", this->window.frames);
-			//this->checkAllFrames();
+			this->checkAllFrames();
 		}
 	}
 }
@@ -115,7 +115,7 @@ void Server::checkAllFrames()
 	if (this->window.getFrame(i - 1).getSOH() == 0x4)
 	{
 		printf("CLEAARRR\n");
-		writeFramesToFile(this->destinationFile, this->window.frames);
+		this->writer.appendPacket(this->window.frames);
 		printf("EXIT\n");
 		exit(1);
 	}
