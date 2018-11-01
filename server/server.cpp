@@ -44,11 +44,12 @@ void Server::listenForClients()
 {
 	sockaddr clientAddress;
 	unsigned int addrlen;
-	char buffer[1034];
+	char *buffer;
 	int dataLength;
 	bool lastPacketReceived = false;
 	while (1)
 	{
+		buffer = new char[1034];
 		printf("WAIT\n");
 		recvfrom((this->sock), buffer, 1034, 0, &(clientAddress), &addrlen);
 		Frame frame(buffer);
@@ -63,6 +64,7 @@ void Server::listenForClients()
 			//writeFramesToFile("examples/test-result.pdf", this->window.frames);
 			this->checkAllFrames();
 		}
+		delete[] buffer;
 	}
 }
 
@@ -101,6 +103,8 @@ void Server::replyNACK(int seqNum, sockaddr clientAddress)
 
 void Server::checkAllFrames()
 {
+	this->window.locked = true;
+	printf("FRAME LEFT %d\n", this->window.frames.size());
 	int i = 0;
 	for (Frame &f : this->window.frames)
 	{
@@ -112,12 +116,13 @@ void Server::checkAllFrames()
 		i++;
 	}
 
-	if (this->window.getFrame(i - 1).getSOH() == 0x4)
+	if (this->window.getFrame(i - 1 + this->window.dumped).getSOH() == 0x4)
 	{
 		printf("CLEAARRR\n");
 		this->writer.appendPacket(this->window.frames);
 		printf("EXIT\n");
-		exit(1);
 	}
+	this->window.locked = false;
+	// exit(0);
 }
 } // namespace server

@@ -19,13 +19,19 @@ FileWriter::~FileWriter()
 
 void FileWriter::appendPacket(Frame &frame)
 {
+	printf("APPENDING SEQNUM %d SIZE %d\n", frame.getSeqNum(), frame.getDataLength());
 	this->file.write(frame.getData(), frame.getDataLength());
+	printf("%x\n", this->file.rdstate());
 }
 
 void FileWriter::appendPacket(std::vector<Frame> &frames)
 {
 	for (auto &frame : frames)
 	{
+		if (frame.getDataLength() == 0)
+		{
+			continue;
+		}
 		this->appendPacket(frame);
 	}
 }
