@@ -13,6 +13,7 @@ FileReader::FileReader(const char *filename)
     this->file.open(filename, std::ifstream::binary | std::ifstream::ate | std::fstream::in);
     this->fileSize = this->file.tellg();
     this->file.seekg(0, std::ios_base::beg);
+    this->maxDataLength = 1024;
     this->file.close();
 }
 
@@ -79,6 +80,8 @@ std::vector<Frame> FileReader::toFrames(int maxDataLength)
 {
     std::vector<Frame> result;
     int seqnum = 0;
+
+    result.resize(this->fileSize / maxDataLength + 1);
 
     this->file.open(filename, std::ifstream::binary | std::fstream::in);
 

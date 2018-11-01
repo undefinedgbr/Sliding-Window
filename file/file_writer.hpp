@@ -14,14 +14,14 @@ class FileWriter
   public:
 	FileWriter(const char *filename);
 	~FileWriter();
-	void appendPacket(std::vector<Frame> frames);
-	void appendPacket(Frame frame);
+	void appendPacket(std::vector<Frame> &frames);
+	void appendPacket(Frame &frame);
 
   private:
 	std::ofstream file;
 	const char *filename;
 };
 
-int writeFramesToFile(const char *filename, std::vector<Frame> frames);
+int writeFramesToFile(const char *filename, std::vector<Frame> &frames);
 } // namespace file
 #endif

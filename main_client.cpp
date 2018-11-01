@@ -44,18 +44,30 @@ int main(int argc, char **argv)
 	});
 
 	// FileReader reader("examples/test.flac");
-	FileReader reader(filename);
-	vector<Frame> frames = reader.toFrames(1024);
+	FileReader reader(filename, 1024);
+	// vector<Frame> frames = reader.toFrames(1024);
 
-	for (Frame f : frames)
+	int offset = 0;
+	while (true)
 	{
-		f.generateChecksum();
-		bool result = false;
-		while (!result) {
-			result = client.sendMessage(f);
-			usleep(3000);
+		std::vector<Frame> frames = reader.readAt(offset, buffersize);
+		for (Frame &f : frames)
+		{
+			f.generateChecksum();
+			bool result = false;
+			while (!result)
+			{
+				result = client.sendMessage(f);
+				// usleep(3000);
+			}
+			// usleep(3000);
 		}
-		usleep(3000);
+
+		if (frames[frames.size() - 1].getSOH() == 0x4)
+		{
+			break;
+		}
+		offset += frames.size();
 	}
 
 	thread2.join();

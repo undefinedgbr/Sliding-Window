@@ -24,6 +24,10 @@ Server::Server(int port, char *destinationFile)
 	this->window = SlidingWindow(10);
 	this->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	bind((this->sock), (struct sockaddr *)&(this->address), sizeof(this->address));
+
+	this->window.setWFCallback([this](Frame &frame) {
+		printf("YUHU\n");
+	});
 }
 
 Server::~Server()
@@ -31,28 +35,28 @@ Server::~Server()
 	close(this->sock);
 }
 
-void Server::listenForClients() 
+void Server::listenForClients()
 {
 	sockaddr clientAddress;
 	unsigned int addrlen;
-	char * buffer;
-	char * data;
+	char buffer[1034];
 	int dataLength;
 	bool lastPacketReceived = false;
-	while (1) {
-		buffer = new char[1034];
-		recvfrom((this->sock) , buffer, 1034, 0, &(clientAddress), &addrlen);
+	while (1)
+	{
+		recvfrom((this->sock), buffer, 1034, 0, &(clientAddress), &addrlen);
 		Frame frame(buffer);
-		if (!lastPacketReceived) {
+		if (!lastPacketReceived)
+		{
 			lastPacketReceived = frame.getSOH() == 0x4;
 		}
 		printf("RECEIVED FRAME : %d\n", frame.getSeqNum());
 		this->processFrame(frame, clientAddress);
-		if (lastPacketReceived) {
+		if (lastPacketReceived)
+		{
 			//writeFramesToFile("examples/test-result.pdf", this->window.frames);
 			this->checkAllFrames();
 		}
-		delete [] buffer;
 	}
 }
 
@@ -69,41 +73,45 @@ void Server::processFrame(Frame &frame, sockaddr clientAddress)
 	}
 }
 
-void Server::replyACK(int seqNum, sockaddr clientAddress) 
+void Server::replyACK(int seqNum, sockaddr clientAddress)
 {
-	ACK ack(0x6, seqNum+1);
-	printf("SENT ACK : %d\n", ack.getNextSeqNum() -1);
+	ACK ack(0x6, seqNum + 1);
+	printf("SENT ACK : %d\n", ack.getNextSeqNum() - 1);
 	this->window.addACK(ack);
-	char * buffer = ack.serialize();
+	char *buffer = ack.serialize();
 	sendto(this->sock, ack.serialize(), 6, 0, &(clientAddress), sizeof(clientAddress));
 	free(buffer);
 }
 
-void Server::replyNACK(int seqNum, sockaddr clientAddress) 
+void Server::replyNACK(int seqNum, sockaddr clientAddress)
 {
-	ACK ack(0x2, seqNum+1);
-	printf("SENT NACK : %d\n", ack.getNextSeqNum() -1);
+	ACK ack(0x2, seqNum + 1);
+	printf("SENT NACK : %d\n", ack.getNextSeqNum() - 1);
 	this->window.addACK(ack);
-	char * buffer = ack.serialize();
+	char *buffer = ack.serialize();
 	sendto(this->sock, ack.serialize(), 6, 0, &(clientAddress), sizeof(clientAddress));
 	free(buffer);
 }
 
-void Server::checkAllFrames() 
+void Server::checkAllFrames()
 {
 	int i = 0;
-	for (Frame& f : this->window.frames) {
-		if (f.getSeqNum() != i) {
+	for (Frame &f : this->window.frames)
+	{
+		if (f.getSeqNum() != i)
+		{
 			printf("MISSING FRAME : %d\n", i);
 			break;
 		}
 		i++;
 	}
 
-	if (this->window.getFrame(i-1).getSOH() == 0x4) {
+	if (this->window.getFrame(i - 1).getSOH() == 0x4)
+	{
 		printf("CLEAARRR\n");
 		writeFramesToFile(this->destinationFile, this->window.frames);
+		printf("EXIT\n");
 		exit(1);
 	}
 }
-}
+} // namespace server
