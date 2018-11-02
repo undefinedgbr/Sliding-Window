@@ -22,8 +22,9 @@ class Server
 	char *destinationFile;
 
   public:
+  	int bufferSize;
 	FileWriter writer;
-	Server(int port, char *destinationFile, int windowsize);
+	Server(int port, char *destinationFile, int windowsize, int bufferSize);
 	~Server();
 	void listenForClients();
 	void processFrame(Frame &frame, sockaddr clientAddress);

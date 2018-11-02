@@ -6,14 +6,15 @@ namespace sw
 using namespace packet;
 using namespace std;
 
-SlidingWindow::SlidingWindow(int size)
+SlidingWindow::SlidingWindow(int size, int bufferSize)
 {
+	printf("BUFFER : %d\n", bufferSize);
 	this->size = size;
 	this->start = 0;
 	this->end = this->start + size;
 	this->availableFrame = size;
 	this->acks.resize(size);
-	this->frames.resize(100);
+	this->frames.resize(this->bufferSize);
 	this->locked = false;
 	this->dumped = this->start;
 

@@ -25,7 +25,8 @@ class Client
 	deque<tuple<int, struct tm *>> timeouts;
 
   public:
-	Client(char *host, int port, int windowSize);
+  	int bufferSize;
+	Client(char *host, int port, int windowSize, int bufferSize);
 	~Client();
 	bool sendMessage(Frame &frame);
 	bool checkACK(int seqNum);

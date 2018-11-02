@@ -22,11 +22,12 @@ class SlidingWindow
 	std::function<void(vector<Frame> &)> windowForwardCallback;
 
   public:
+  	int bufferSize;
   	int dumped;
   	bool locked;
 	std::vector<Frame> frames;
-	SlidingWindow() : SlidingWindow(0) {}
-	SlidingWindow(int size);
+	SlidingWindow() : SlidingWindow(10, 100) {}
+	SlidingWindow(int size, int bufferSize);
 	SlidingWindow(const SlidingWindow &window);
 	bool addFrame(Frame frame);
 	bool addACK(ACK ack);

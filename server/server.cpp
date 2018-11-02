@@ -14,15 +14,15 @@ using namespace packet;
 using namespace sw;
 using namespace file;
 
-Server::Server(int port, char *destinationFile, int windowsize) : writer(destinationFile)
+Server::Server(int port, char *destinationFile, int windowsize, int bufferSize) : writer(destinationFile), window(windowsize, bufferSize)
 {
 	this->destinationFile = destinationFile;
 	this->port = port;
 	this->address.sin_family = AF_INET;
 	this->address.sin_addr.s_addr = INADDR_ANY;
 	this->address.sin_port = htons(port);
-	this->window = SlidingWindow(windowsize);
 	this->sock = socket(AF_INET, SOCK_DGRAM, 0);
+	this->bufferSize = bufferSize;
 	bind((this->sock), (struct sockaddr *)&(this->address), sizeof(this->address));
 
 	this->window.setWFCallback([this](vector<Frame> &frames) {
@@ -30,7 +30,7 @@ Server::Server(int port, char *destinationFile, int windowsize) : writer(destina
 		this->window.locked = true;
 		this->writer.appendPacket(frames);
 		this->window.frames.clear();
-		this->window.frames.resize(100);
+		this->window.frames.resize(this->bufferSize);
 		this->window.locked = false;
 	});
 }
