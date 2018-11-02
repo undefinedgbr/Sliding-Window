@@ -29,6 +29,7 @@ Server::Server(int port, char *destinationFile, int windowsize, int bufferSize) 
 		printf("DUMPED CALLED\n");
 		this->window.locked = true;
 		this->writer.appendPacket(frames);
+		this->window.setAvailableFrame(this->bufferSize);
 		this->window.frames.clear();
 		this->window.frames.resize(this->bufferSize);
 		this->window.locked = false;
