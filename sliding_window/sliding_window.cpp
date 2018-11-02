@@ -41,13 +41,6 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
-	if (this->availableFrame == 0)
-	{
-		printf("WINDOW SIZE : %d\n", this->size);
-		printf("NO AVAIL FRAME\n");
-		return false;
-	}
-
 	if (frame.getSeqNum() - this->dumped >= this->frames.size())
 	{
 		printf("SIZE NOT ENOUGH\n");
@@ -60,8 +53,18 @@ bool SlidingWindow::addFrame(Frame frame)
 		return false;
 	}
 
+	if (this->availableFrame == 0 && this->frames[frame.getSeqNum() - this->dumped].getSOH() == 0x0)
+	{
+		printf("WINDOW SIZE : %d\n", this->size);
+		printf("NO AVAIL FRAME\n");
+		return false;
+	}
+
+	if (this->frames[frame.getSeqNum() - this->dumped].getSOH() == 0x0) {
+		this->availableFrame--;
+	}
+
 	this->frames[frame.getSeqNum() - this->dumped] = frame;
-	this->availableFrame--;
 	return true;
 }
 
@@ -73,16 +76,19 @@ bool SlidingWindow::addACK(ACK ack)
 
 	if (ack.getAck() != 0x6)
 	{
+		printf("NOT ACK\n");
 		return false;
 	}
 
 	if (ack.getNextSeqNum() > this->acks.size())
 	{
+		printf("ACK SIZE NOT ENOUGH\n");
 		return false;
 	}
 
 	if (ack.getNextSeqNum() - 1 > this->end)
 	{
+		printf("ACK OUT OF BOUND\n");
 		return false;
 	}
 
@@ -157,6 +163,10 @@ void SlidingWindow::setWFCallback(std::function<void(vector<Frame> &)> func)
 void SlidingWindow::incrementAvailableFrame()
 {
 	this->availableFrame++;
+}
+
+void SlidingWindow::setAvailableFrame(int availableFrame) {
+	this->availableFrame = availableFrame;
 }
 
 int SlidingWindow::getSize() const

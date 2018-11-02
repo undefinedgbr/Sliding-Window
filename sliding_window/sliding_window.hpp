@@ -37,6 +37,7 @@ class SlidingWindow
 	void setSize(int size);
 	void setStart(int start);
 	void setEnd(int end);
+	void setAvailableFrame(int availableFrame);
 	void setWFCallback(std::function<void(vector<Frame> &)> func);
 	void incrementAvailableFrame();
 

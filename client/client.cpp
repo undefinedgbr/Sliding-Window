@@ -25,6 +25,10 @@ namespace client {
 	    //inet_pton(AF_INET, host, &(this->serverAddress).sin_addr);
 	    this->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	    this->window = SlidingWindow(windowSize);
+
+	    this->window.setWFCallback([this](vector<Frame> &frames) {
+	    	this->window.setAvailableFrame(100);
+		});
 	}
 
 	Client::~Client() {
@@ -32,13 +36,13 @@ namespace client {
 	}
 
 	void Client::listenForResponse() {
-		char * buffer;
 		while (1) {
+			char * buffer;
 			buffer = new char[6];
 			recv(this->sock, buffer, 6, 0);
 			ACK ack(buffer);
+			printf("RECEIVED ACK : %d\n", ack.getNextSeqNum() -1);
 			if (ack.checkValidity()) {
-				printf("RECEIVED ACK : %d\n", ack.getNextSeqNum() -1);
 				this->window.addACK(ack);
 			}
 			delete [] buffer;

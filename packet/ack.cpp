@@ -4,7 +4,7 @@
 namespace packet {
 	ACK::ACK() {
 		this->ack = 0;
-		this->nextSeqNum = 0;
+		this->nextSeqNum = -1;
 		this->checksum = -1;
 	}
 

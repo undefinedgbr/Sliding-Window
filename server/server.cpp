@@ -43,7 +43,9 @@ Server::~Server()
 void Server::listenForClients()
 {
 	sockaddr clientAddress;
-	unsigned int addrlen;
+	//unsigned int addrlen;
+	socklen_t addrlen;
+	addrlen = sizeof(struct sockaddr_in);
 	char *buffer;
 	int dataLength;
 	bool lastPacketReceived = false;
@@ -52,6 +54,7 @@ void Server::listenForClients()
 		buffer = new char[1034];
 		printf("WAIT\n");
 		recvfrom((this->sock), buffer, 1034, 0, &(clientAddress), &addrlen);
+		printf("PORT :%d\n", (*(sockaddr_in *) (&clientAddress)).sin_port);
 		Frame frame(buffer);
 		if (!lastPacketReceived)
 		{
@@ -104,7 +107,7 @@ void Server::replyNACK(int seqNum, sockaddr clientAddress)
 void Server::checkAllFrames()
 {
 	this->window.locked = true;
-	printf("FRAME LEFT %lu\n", this->window.frames.size());
+	//printf("FRAME LEFT %lu\n", this->window.frames.size());
 	int i = 0;
 	for (Frame &f : this->window.frames)
 	{

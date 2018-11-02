@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	// FileReader reader("examples/test.flac");
 	FileReader reader(filename, 1024);
 	// vector<Frame> frames = reader.toFrames(1024);
-
+	usleep(1000000);
 	int offset = 0;
 	while (true)
 	{
@@ -54,11 +54,11 @@ int main(int argc, char **argv)
 		for (Frame &f : frames)
 		{
 			f.generateChecksum();
-			bool result = false;
+			bool result = client.sendMessage(f);
 			while (!result)
 			{
 				result = client.sendMessage(f);
-				//usleep(1000);
+				usleep(1000);
 			}
 			//usleep(1000);
 		}
