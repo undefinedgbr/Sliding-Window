@@ -30,7 +30,7 @@ SlidingWindow::SlidingWindow(const SlidingWindow &window)
 	this->end = window.getEnd();
 	this->availableFrame = this->size;
 	this->acks.resize(this->size);
-	this->frames.resize(100);
+	this->frames.resize(this->bufferSize);
 	this->locked = false;
 	this->dumped = this->start;
 
@@ -106,7 +106,7 @@ bool SlidingWindow::addACK(ACK ack)
 		this->availableFrame++;
 	}
 	int count = 0;
-	for (int i = this->dumped; i < this->dumped + 100; i++) {
+	for (int i = this->dumped; i < this->dumped + this->bufferSize; i++) {
 		if (this->acks[i].getAck() == 0x6) {
 			count++;
 		} else {
@@ -114,9 +114,9 @@ bool SlidingWindow::addACK(ACK ack)
 		}
 	}
 
-	if (count == 100) {
+	if (count == this->bufferSize) {
 		this->windowForwardCallback(this->frames);
-		this->dumped += 100;
+		this->dumped += this->bufferSize;
 	}
 
 
