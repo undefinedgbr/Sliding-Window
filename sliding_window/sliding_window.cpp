@@ -9,6 +9,7 @@ using namespace std;
 SlidingWindow::SlidingWindow(int size, int bufferSize)
 {
 	printf("BUFFER : %d\n", bufferSize);
+	this->bufferSize = bufferSize;
 	this->size = size;
 	this->start = 0;
 	this->end = this->start + size;
@@ -23,6 +24,7 @@ SlidingWindow::SlidingWindow(int size, int bufferSize)
 
 SlidingWindow::SlidingWindow(const SlidingWindow &window)
 {
+	this->bufferSize = window.bufferSize;
 	this->size = window.getSize();
 	this->start = window.getStart();
 	this->end = window.getEnd();
