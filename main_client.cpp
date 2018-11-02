@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 			while (!result)
 			{
 				result = client.sendMessage(f);
-				usleep(1000);
+				//usleep(1000);
 			}
 			//usleep(1000);
 		}

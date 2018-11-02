@@ -60,9 +60,16 @@ Kelas ini adalah representasi packet/frame yang dikirimkan oleh client yang beri
 
 ### sliding_window
 
-Kelas ini adalah representasi sliding window yang akan dimiliki oleh server dan client. Kelas ini memiliki atribut size, start, end, availableFrame, dumped, locked, frames (Vector of frames).
+Kelas ini adalah representasi mekanisme sliding window yang akan dimiliki oleh server dan client. Terdapat atribut size yaitu ukuran window dan atribut buffersize yaitu ukuran buffer.
 
-### sliding_window 
+Kelas ini memiliki vector ACK (**acks**) dan vektor Frame (**frames**). acks digunakan untuk menyimpan informasi apakah sebuah paket sudah dikirim acknya (bagi server) atau sudah diterima (bagi client). Sedangkan vektor frames digunakan untuk menyimpan informasi frame yang sudah pernah dikirim (bagi client) atau diterima (bagi server).
+
+Untuk representasi window, digunakan atribut **start** dan **end** untuk awal dan akhir dari window. Atribut **availableFrame** adalah jumlah frame didalam window yang belum dikirim atau sudah dikirim dan sudah menerima ack-nya (client), untuk server atribut ini tidak digunakan. 
+
+Selain itu, terdapat atribut function object **windowForwardCallback** yang digunakan untuk men-"dump" isi buffer ketika buffer sudah penuh.
+
+Pada kelas ini, terdapat fungsi addFrame yang digunakan untuk mengecek apakah suatu frame bisa dikirim (client) atau menyimpan frame yang sudah diterima (server). Ketika fungsi tersebut dipanggil, akan dicek apakah frame tersebut berada di window atau tidak. Jika iya, maka paket tersebut bisa dikirim (client) atau dibalas dengan ACK (server).
+
 
 ### Sisi client
 
