@@ -14,14 +14,14 @@ using namespace packet;
 using namespace sw;
 using namespace file;
 
-Server::Server(int port, char *destinationFile, int windowsize) : writer(destinationFile)
+Server::Server(int port, char *destinationFile, int windowsize, int buffersize) : writer(destinationFile)
 {
 	this->destinationFile = destinationFile;
 	this->port = port;
 	this->address.sin_family = AF_INET;
 	this->address.sin_addr.s_addr = INADDR_ANY;
 	this->address.sin_port = htons(port);
-	this->window = SlidingWindow(windowsize);
+	this->window = SlidingWindow(windowsize, buffersize);
 	this->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	bind((this->sock), (struct sockaddr *)&(this->address), sizeof(this->address));
 
@@ -30,7 +30,7 @@ Server::Server(int port, char *destinationFile, int windowsize) : writer(destina
 		this->window.locked = true;
 		this->writer.appendPacket(frames);
 		this->window.frames.clear();
-		this->window.frames.resize(100);
+		this->window.frames.resize(this->buffersize);
 		this->window.locked = false;
 	});
 }

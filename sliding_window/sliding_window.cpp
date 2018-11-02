@@ -6,14 +6,14 @@ namespace sw
 using namespace packet;
 using namespace std;
 
-SlidingWindow::SlidingWindow(int size)
+SlidingWindow::SlidingWindow(int size, int buffersize)
 {
 	this->size = size;
 	this->start = 0;
 	this->end = this->start + size;
 	this->availableFrame = size;
 	this->acks.resize(size);
-	this->frames.resize(100);
+	this->frames.resize(this->buffersize);
 	this->locked = false;
 	this->dumped = this->start;
 
@@ -27,7 +27,7 @@ SlidingWindow::SlidingWindow(const SlidingWindow &window)
 	this->end = window.getEnd();
 	this->availableFrame = this->size;
 	this->acks.resize(this->size);
-	this->frames.resize(100);
+	this->frames.resize(this->buffersize);
 	this->locked = false;
 	this->dumped = this->start;
 
@@ -36,7 +36,8 @@ SlidingWindow::SlidingWindow(const SlidingWindow &window)
 
 bool SlidingWindow::addFrame(Frame frame)
 {
-	if (this->locked) {
+	if (this->locked)
+	{
 		printf("LOCKED\n");
 		return false;
 	}
@@ -67,7 +68,8 @@ bool SlidingWindow::addFrame(Frame frame)
 
 bool SlidingWindow::addACK(ACK ack)
 {
-	if (this->locked) {
+	if (this->locked)
+	{
 		return false;
 	}
 
@@ -97,19 +99,23 @@ bool SlidingWindow::addACK(ACK ack)
 		this->availableFrame++;
 	}
 	int count = 0;
-	for (int i = this->dumped; i < this->dumped + 100; i++) {
-		if (this->acks[i].getAck() == 0x6) {
+	for (int i = this->dumped; i < this->dumped + this->buffersize; i++)
+	{
+		if (this->acks[i].getAck() == 0x6)
+		{
 			count++;
-		} else {
+		}
+		else
+		{
 			break;
 		}
 	}
 
-	if (count == 100) {
+	if (count == this->buffersize)
+	{
 		this->windowForwardCallback(this->frames);
-		this->dumped += 100;
+		this->dumped += this->buffersize;
 	}
-
 
 	return true;
 }
