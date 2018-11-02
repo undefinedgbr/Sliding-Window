@@ -17,15 +17,15 @@ using namespace std;
 
 class Client
 {
-  private:
+private:
 	struct sockaddr_in serverAddress;
 	int port;
 	int sock;
 	SlidingWindow window;
 	deque<tuple<int, struct tm *>> timeouts;
 
-  public:
-	Client(char *host, int port, int windowSize);
+public:
+	Client(char *host, int port, int windowSize, int buffersize);
 	~Client();
 	bool sendMessage(Frame &frame);
 	bool checkACK(int seqNum);

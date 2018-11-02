@@ -20,13 +20,14 @@ class SlidingWindow
 	int end;
 	int availableFrame;
 	std::function<void(vector<Frame> &)> windowForwardCallback;
+	int buffersize;
 
   public:
-  	int dumped;
-  	bool locked;
+	int dumped;
+	bool locked;
 	std::vector<Frame> frames;
-	SlidingWindow() : SlidingWindow(0) {}
-	SlidingWindow(int size);
+	SlidingWindow() : SlidingWindow(0, 100) {}
+	SlidingWindow(int size, int buffersize);
 	SlidingWindow(const SlidingWindow &window);
 	bool addFrame(Frame frame);
 	bool addACK(ACK ack);

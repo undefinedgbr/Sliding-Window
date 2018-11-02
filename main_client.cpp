@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	strcpy(host, s.c_str());
 
 	// Client client(host, 9000);
-	Client client(host, port, windowsize);
+	Client client(host, port, windowsize, buffersize);
 
 	thread thread1([&client] {
 		client.listenForResponse();
